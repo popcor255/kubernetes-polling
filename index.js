@@ -29,9 +29,8 @@ function getRepos(){
 
             if(new_date !== date){    
                 console.log("test");
+                date = new_date;
             }
-
-            date = new_date; 
         });
     });
 }
