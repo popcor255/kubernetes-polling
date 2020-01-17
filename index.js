@@ -1,13 +1,12 @@
 var request = require('request');
 var { repos } = require('./repos.json');
+var date =  null;
 
 require('dotenv').config();
 
 setInterval(getRepos, 5000);
 
 function getRepos(){
-    let date =  null;
-
     repos.forEach(repo => {
         var options = {
             headers : {
