@@ -27,7 +27,7 @@ function getRepos(){
             
             let new_date = JSON.parse(response.body)[0].commit.committer.date;
 
-            if(new_date !== date && date != null){    
+            if(new_date !== date){    
                 console.log("test");
             }
 
