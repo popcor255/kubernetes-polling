@@ -1,13 +1,13 @@
 var request = require('request');
 var { repos } = require('./repos.json');
-var date =  null;
-var last_date = null;
 
 require('dotenv').config();
 
 setInterval(getRepos, 5000);
 
 function getRepos(){
+    let date =  null;
+
     repos.forEach(repo => {
         var options = {
             headers : {
@@ -20,18 +20,18 @@ function getRepos(){
         };
         
         request(options, function (error, response) { 
-        if (error) throw new Error(error);
-        if (typeof response.body.message  == "string"){
-            return new Error(error);
-        }
-        
-        if(last_date !== date){
-                console.log("test");
-        }
+            if (error) throw new Error(error);
+            if (typeof response.body.message  == "string"){
+                return new Error(error);
+            }
+            
+            let new_date = JSON.parse(response.body)[0].commit.committer.date;
 
-        last_date = date;
-        date = JSON.parse(response.body)[0].commit.committer.date;
-        
+            if(new_date !== date && date != null){    
+                console.log("test");
+            }
+
+            date = new_date; 
         });
     });
 }
