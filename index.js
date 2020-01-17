@@ -26,7 +26,7 @@ function getRepos(){
         }
         
         if(last_date !== date){
-                console.log("test");
+            
         }
 
         last_date = date;
