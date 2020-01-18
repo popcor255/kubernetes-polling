@@ -7,7 +7,7 @@ require('dotenv').config();
 setInterval(getRepos, 5000);
 
 function getRepos(){
-    
+
     repos.forEach(repo => {
         var options = {
             headers : {
@@ -24,7 +24,7 @@ function getRepos(){
             if (typeof response.body.message  == "string"){
                 return new Error(error);
             }
-            
+
             let new_date = JSON.parse(response.body)[0].commit.committer.date;
 
             if(new_date !== date){    
