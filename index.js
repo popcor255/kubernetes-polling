@@ -9,7 +9,8 @@ setInterval(getRepos, 5000);
 
 function getRepos(){
 
-    var random = shortid.generate();
+
+    var random = Math.floor(Math.random() * 100000000000000);
 
     repos.forEach(repo => {
         var options = {
