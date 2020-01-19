@@ -44,6 +44,7 @@ function getRepos(){
     
 }
 
+
 function validate(error, response, env){
     if(env == null){
         console.log("WARNING: NO ENV VARIABLES WAS PASSED, CANT VALIDATE ENV");
