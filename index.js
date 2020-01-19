@@ -8,13 +8,10 @@ require('dotenv').config();
 setInterval(getRepos, 5000);
 
 function getRepos(){
-
-    var token = process.env.API_TOKEN;
-    var uuid = random(Math.pow(10, 12), Math.pow(10, 13));
     
     repos.forEach(repo => {
 
-        var { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(repo, uuid);
+        var { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(generateUUID(repo));
 
         request(gitRequest, function (error, response) {
             validate(error, response, process.env); 
@@ -43,11 +40,6 @@ function getRepos(){
     
 }
 
-function random(min, max) { 
-    // min and max included 
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
 function validate(error, response, env){
     if(env == null){
         console.log("WARNING: NO ENV VARIABLES WAS PASSED, CANT VALIDATE ENV");
@@ -69,7 +61,7 @@ function getLastCommitter(response){
     return JSON.parse(response.body)[0].commit.committer.date;
 }
 
-function getRequests(repo, uuid){
+function getRequests(repo){
     var gitRequest = {
         headers : {
         'User-Agent': 'Nodejs-App',
@@ -77,7 +69,7 @@ function getRequests(repo, uuid){
         'Content-Type' : 'application/json; charset=utf-8'
         },
         'method': 'GET',
-        'url': repo + "?page=1&per_page=1"
+        'url': repo.url + "?page=1&per_page=1"
     };
 
     var pipelineRunRequest = {
@@ -86,7 +78,7 @@ function getRequests(repo, uuid){
         'headers': {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-" + uuid, "labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
+        body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-" + repo.uuid, "labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
     };
 
     var pipelineRerunRequest = {
@@ -95,8 +87,21 @@ function getRequests(repo, uuid){
         'headers': {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"pipelinerunname":"mypipeline-run-" + uuid})
+        body: JSON.stringify({"pipelinerunname":"mypipeline-run-" + repo.uuid})
     };
 
     return { gitRequest, pipelineRunRequest, pipelineRerunRequest };
+}
+
+function generateUUID(repo){
+    if(!repo.uuid){
+        repo.uuid = random(Math.pow(10, 12), Math.pow(10, 13));
+    }
+
+    return repo;
+}
+
+function random(min, max) { 
+    // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }

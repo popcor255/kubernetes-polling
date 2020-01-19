@@ -1,5 +1,8 @@
 {
     "repos": [
-        "https://api.github.com/repos/popcor255/git-pod-puller/commits"
+        {
+            "url" : "https://api.github.com/repos/popcor255/git-pod-puller/commits",
+            "uuid" : null
+        }
     ]
 }
