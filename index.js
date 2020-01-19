@@ -8,6 +8,8 @@ setInterval(getRepos, 5000);
 
 function getRepos(){
 
+    var random = Math.random();
+
     repos.forEach(repo => {
         var options = {
             headers : {
@@ -25,7 +27,7 @@ function getRepos(){
             'headers': {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-1579400761634","labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
+            body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-1579" + Math.floor(random * 100) + "461634","labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
         };
         
         request(options, function (error, response) { 
@@ -36,7 +38,7 @@ function getRepos(){
 
             let new_date = JSON.parse(response.body)[0].commit.committer.date;
 
-            if(new_date !== date && date != null){    
+            if(new_date !== date){    
                 request(tektonRequest, function (error, response) { 
                     if (error) throw new Error(error);
                     console.log(response.body);
