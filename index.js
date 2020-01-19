@@ -8,7 +8,7 @@ setInterval(getRepos, 5000);
 
 function getRepos(){
 
-    var random = Math.random();
+    var random = Math.floor(Math.random() * 100000000000000);
 
     repos.forEach(repo => {
         var options = {
@@ -27,12 +27,12 @@ function getRepos(){
             'headers': {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-1579" + Math.floor(random * 100) + "461634","labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
+            body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-" + random,"labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
         };
         
         request(options, function (error, response) { 
             if (error) throw new Error(error);
-            if (typeof response.body.message  == "string"){
+            if (typeof response.body.message  == "string" ){
                 return new Error(error);
             }
 
