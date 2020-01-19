@@ -1,4 +1,5 @@
 var request = require('request');
+var shortid = require('shortid');
 var { repos } = require('./repos.json');
 var date =  null;
 
@@ -8,7 +9,9 @@ setInterval(getRepos, 5000);
 
 function getRepos(){
 
-    var random = Math.floor(Math.random() * 100000000000000);
+    console.log(shortid.generate(14));
+
+    var random = shortid.generate();
 
     repos.forEach(repo => {
         var options = {
@@ -23,7 +26,7 @@ function getRepos(){
 
         var tektonRequest = {
             'method': 'POST',
-            'url': 'http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/tekton-pipelines/pipelineruns/',
+            'url': 'http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/default/pipelineruns/',
             'headers': {
               'Content-Type': 'application/json'
             },
