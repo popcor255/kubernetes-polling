@@ -5,7 +5,6 @@ var date =  null;
 
 require('dotenv').config();
 
-
 setInterval(getRepos, 5000);
 
 function getRepos(){
@@ -13,7 +12,8 @@ function getRepos(){
     repos = repos.map(repo => {
 
         repo = generateUUID(repo);
-        let { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(repo);
+
+        let { gitRequest, pipelineRunRequest } = getRequests(repo);
 
         request(gitRequest, function (error, response) {
             validate(error, response, process.env); 
@@ -21,17 +21,9 @@ function getRepos(){
             let new_date = getLastCommitter(response);
 
             if(new_date !== date){    
-                if(isFirstRequest(date)){
-                    request(pipelineRunRequest, function (error, response) { 
-                        validate(error, response);
-                    });
-                }
-                else{
-                    request(pipelineRerunRequest, function (error, response) { 
-                        validate(error, response);
-                    });
-                }
-
+                request(pipelineRunRequest, function (error, response) { 
+                    validate(error, response);
+                });
                 date = new_date;
             }
 
@@ -52,10 +44,6 @@ function validate(error, response, env){
     if (typeof response.body.message  == "string" ){
         return new Error(error);
     }
-}
-
-function isFirstRequest(){
-    return date === null;
 }
 
 function getLastCommitter(response){
@@ -82,16 +70,7 @@ function getRequests(repo){
         body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-" + repo.uuid, "labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
     };
 
-    var pipelineRerunRequest = {
-        'method': 'POST',
-        'url': 'http://' + process.env.IP + ':' + process.env.PORT + '/v1/namespaces/default/rerun/',
-        'headers': {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({"pipelinerunname":"mypipeline-run-" + repo.uuid})
-    };
-
-    return { gitRequest, pipelineRunRequest, pipelineRerunRequest };
+    return { gitRequest, pipelineRunRequest };
 }
 
 function generateUUID(repo){
