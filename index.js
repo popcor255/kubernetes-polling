@@ -13,7 +13,7 @@ function getRepos(){
     var uuid = random(1, Math.pow(10, 13));
 
     if(!token){
-        throw new Error("API TOKEN NOT FOUND AS ENV VARIABLE");
+        throw new Error("API TOKEN NOT FOUND AS ENV");
     }
   
     repos.forEach(repo => {
