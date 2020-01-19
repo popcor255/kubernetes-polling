@@ -9,7 +9,7 @@ setInterval(getRepos, 5000);
 
 function getRepos(){
 
-    var uuid = randomIntFromInterval(1, Math.pow(10, 10));
+    var uuid = random(1, Math.pow(10, 10));
   
     repos.forEach(repo => {
         var options = {
@@ -52,6 +52,7 @@ function getRepos(){
     
 }
 
-function randomIntFromInterval(min, max) { // min and max included 
+function random(min, max) { 
+    // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
-  }
+}
