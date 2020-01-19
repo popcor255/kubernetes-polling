@@ -11,26 +11,23 @@ function getRepos(){
 
     var token = process.env.API_TOKEN;
     var uuid = random(Math.pow(10, 12), Math.pow(10, 13));
-
-    if(!token){
-        throw new Error("API TOKEN NOT FOUND AS ENV");
-    }
+    
   
     repos.forEach(repo => {
-        var { gitRequest, tektonRequest } = getRequest(repo, uuid);
-        
-        request(gitRequest, function (error, response) { 
-            if (error) throw new Error(error);
-            if (typeof response.body.message  == "string" ){
-                return new Error(error);
-            }
 
-            let new_date = JSON.parse(response.body)[0].commit.committer.date;
+        var { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(repo, uuid);
+
+        
+        request(gitRequest, function (error, response) {
+            validate(token, error, response); 
+
+            let new_date = getLastCommitter(response);
 
             if(new_date !== date){    
                 if(isFirstRequest(date)){
-                    request(tektonRequest, function (error, response) { 
-                        if (error) throw new Error(error);
+                    request(pipelineRunRequest, function (error, response) { 
+                        validate(token, error, response);
+                        console.log(response);
                     });
                 }
                 else{
@@ -50,11 +47,24 @@ function random(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function isFirstRequest(){
-    return date !== null;
+function validate(token, error, response){
+    if(!token) throw new Error("API TOKEN NOT FOUND AS ENV");
+    if (error) throw new Error(error);
+    if (typeof response.body.message  == "string" ){
+        return new Error(error);
+    }
 }
 
-function getRequest(){
+function isFirstRequest(){
+    return date === null;
+}
+
+function getLastCommitter(response){
+    return JSON.parse(response.body)[0].commit.committer.date;
+}
+
+
+function getRequests(repo, uuid){
     var gitRequest = {
         headers : {
         'User-Agent': 'Nodejs-App',
@@ -65,7 +75,7 @@ function getRequest(){
         'url': repo + "?page=1&per_page=1"
     };
 
-    var tektonRequest = {
+    var pipelineRunRequest = {
         'method': 'POST',
         'url': 'http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/default/pipelineruns/',
         'headers': {
@@ -74,5 +84,9 @@ function getRequest(){
         body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-" + uuid, "labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
     };
 
-    return { gitRequest, tektonRequest };
+    var pipelineRerunRequest = {
+
+    };
+
+    return { gitRequest, pipelineRunRequest, pipelineRerunRequest };
 }
