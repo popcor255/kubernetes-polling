@@ -11,6 +11,7 @@ function getRepos(){
     
     repos.forEach(repo => {
 
+        
         var { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(generateUUID(repo));
 
         request(gitRequest, function (error, response) {
