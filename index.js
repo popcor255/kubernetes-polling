@@ -12,8 +12,7 @@ function getRepos(){
     repos = repos.map(repo => {
 
         repo = generateUUID(repo);
-        console.log(repo.uuid);
-        var { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(repo);
+        let { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(repo);
 
         request(gitRequest, function (error, response) {
             validate(error, response, process.env); 
@@ -24,13 +23,11 @@ function getRepos(){
                 if(isFirstRequest(date)){
                     request(pipelineRunRequest, function (error, response) { 
                         validate(error, response);
-                        console.log(response.body);
                     });
                 }
                 else{
                     request(pipelineRerunRequest, function (error, response) { 
                         validate(error, response);
-                        console.log(response.body);
                     });
                 }
 
