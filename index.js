@@ -9,7 +9,7 @@ setInterval(getRepos, 5000);
 
 function getRepos(){
     
-    repos.forEach(repo => {
+    repos = repos.map(repo => {
 
         
         var { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(generateUUID(repo));
@@ -37,6 +37,8 @@ function getRepos(){
             }
 
         });
+
+        return repo;
     });
     
 }
