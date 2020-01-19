@@ -11,8 +11,8 @@ function getRepos(){
     
     repos = repos.map(repo => {
 
-        
-        var { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(generateUUID(repo));
+        repo = generateUUID(repo);
+        var { gitRequest, pipelineRunRequest, pipelineRerunRequest } = getRequests(repo);
 
         request(gitRequest, function (error, response) {
             validate(error, response, process.env); 
