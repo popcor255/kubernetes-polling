@@ -87,7 +87,7 @@ function getRequests(repo){
 
     var pipelineRerunRequest = {
         'method': 'POST',
-        'url': 'http://' + process.env.IP + ':' + process.env.PORT + '/namespaces/default/rerun/',
+        'url': 'http://' + process.env.IP + ':' + process.env.PORT + '/v1/namespaces/default/rerun/',
         'headers': {
           'Content-Type': 'application/json'
         },
