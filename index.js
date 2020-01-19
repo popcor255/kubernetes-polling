@@ -9,7 +9,12 @@ setInterval(getRepos, 5000);
 
 function getRepos(){
 
+    var token = process.env.API_TOKEN;
     var uuid = random(1, Math.pow(10, 13));
+
+    if(!token){
+        throw new Error("API TOKEN NOT FOUND AS ENV VARIABLE");
+    }
   
     repos.forEach(repo => {
         var options = {
