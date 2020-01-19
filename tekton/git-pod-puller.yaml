@@ -12,5 +12,9 @@ spec:
       limits:
         memory: "128Mi"
         cpu: "500m"
+    env:
+      - name: API_TOKEN
+        value: 
+      - name: 
     ports:
       - containerPort: 8080
