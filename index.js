@@ -37,13 +37,12 @@ function getRepos(){
         });
 
         return repo;
-    });
-    
+    });   
 }
 
 function validate(error, response, env){
     if(env == null){
-        console.log("WARNING: NO ENV VARIABLES WAS PASSED, CANT VALIDATE ENV");
+        console.log("WARNING: FUNCTION DID NOT VALIDATE ENV VARIABLES");
     }
     else{
         if(!env.API_TOKEN) throw new Error("API TOKEN NOT FOUND AS ENV");
