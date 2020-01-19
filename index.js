@@ -9,9 +9,8 @@ setInterval(getRepos, 5000);
 
 function getRepos(){
 
-
-    var random = Math.floor(Math.random() * 100000000000000);
-
+    var uuid = randomIntFromInterval(1, Math.pow(10, 13));
+  
     repos.forEach(repo => {
         var options = {
             headers : {
@@ -29,7 +28,7 @@ function getRepos(){
             'headers': {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-" + random,"labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
+            body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-" + uuid, "labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
         };
         
         request(options, function (error, response) { 
@@ -49,10 +48,10 @@ function getRepos(){
             }
 
         });
-
-          
-
-
     });
+    
 }
 
+function randomIntFromInterval(min, max) { // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
