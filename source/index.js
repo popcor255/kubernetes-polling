@@ -1,12 +1,11 @@
 var request = require('request');
-var { repos } = require('./repos.json');
+var { repos } = require('./repos.json.js.js');
 var date =  null;
 
 require('dotenv').config();
 
 setInterval(function(){
     [date, repos] = getRepos(date, repos);
-    console.log(date + ":" + repos);
 }, 5000);
 
 function getRepos(date, repos){
@@ -43,10 +42,10 @@ function validate(error, response, env){
     else{
         if(!env.API_TOKEN) throw new Error("API TOKEN NOT FOUND AS ENV");
     }
+    
     if (error) throw new Error(error);
-    if (typeof response.body.message  == "string" ){
-        return new Error(error);
-    }
+    if (typeof response.body.message  == "string" ) return new Error(error);
+    
 }
 
 function getLastCommitter(response){

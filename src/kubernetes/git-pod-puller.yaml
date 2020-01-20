@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: git-pod-puller
+  labels:
+    name: git-pod-puller
+spec:
+  containers:
+  - name: git-pod-puller
+    image: popcor255/git-pod-puller:1.0.1
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    env:
+      - name: API_TOKEN
+        value: null
+      - name : IP
+        value: null
+      - name : PORT
+        value: "9097"
+    ports:
+      - containerPort: 8080
