@@ -36,10 +36,7 @@ function getRepos(date, repos){
 }
 
 function validate(error, response, env){
-    if(env == null){
-        console.log("WARNING: FUNCTION DID NOT VALIDATE ENV VARIABLES");
-    }
-    else{
+    if(env != null){
         if(!env.API_TOKEN) throw new Error("API TOKEN NOT FOUND AS ENV");
     }
     
