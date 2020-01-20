@@ -4,7 +4,8 @@ require('dotenv').config();
 var { repos } = require('./repos.json');
 //get request
 var request = require('request');
-
+//get tekton functions
+var { createPipelinerun } = require('./tekton.js');
 //variables
 var date =  null;
 
