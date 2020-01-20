@@ -1,14 +1,15 @@
 var request = require('request');
-var shortid = require('shortid');
 var { repos } = require('./repos.json');
 var date =  null;
 
 require('dotenv').config();
 
-setInterval(getRepos, 5000);
+setInterval(function(){
+    [date, repos] = getRepos(date, repos);
+    console.log(date + ":" + repos);
+}, 5000);
 
-function getRepos(){
-    
+function getRepos(date, repos){
     repos = repos.map(repo => {
 
         repo = generateUUID(repo);
@@ -30,7 +31,9 @@ function getRepos(){
         });
 
         return repo;
-    });   
+    });
+
+    return [ date, repos ];
 }
 
 function validate(error, response, env){
@@ -63,11 +66,11 @@ function getRequests(repo){
 
     var pipelineRunRequest = {
         'method': 'POST',
-        'url': 'http://' + process.env.IP + ':' + process.env.PORT + '/proxy/apis/tekton.dev/v1alpha1/namespaces/default/pipelineruns/',
+        'url': 'http://' + process.env.IP + ':' + process.env.PORT + '/proxy/apis/tekton.dev/v1alpha1/namespaces/' + repo.namespace + '/pipelineruns/',
         'headers': {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name":"mypipeline-run-" + repo.uuid, "labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
+        body: JSON.stringify({"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"name": repo.pipeline + "-run-" + repo.uuid, "labels":{"tekton.dev/pipeline":"mypipeline","app":"tekton-app"}},"spec":{"pipelineRef":{"name":"mypipeline"},"resources":[],"params":[],"timeout":"60m"}})  
     };
 
     return { gitRequest, pipelineRunRequest };
