@@ -1,15 +1,17 @@
-var request = require('request');
-var { repos } = require('./repos.json');
-var date =  null;
-
 require('dotenv').config();
 
-setInterval(function(){
-    [date, repos] = getRepos(date, repos);
-}, 5000);
+//get files
+var { repos } = require('./repos.json');
+//get request
+var request = require('request');
 
-function getRepos(date, repos){
-    repos = repos.map(repo => {
+//variables
+var date =  null;
+
+setInterval(getRepos, 5000);
+
+function getRepos(){
+    repos.map(repo => {
 
         repo = generateUUID(repo);
 
@@ -31,8 +33,6 @@ function getRepos(date, repos){
 
         return repo;
     });
-
-    return [ date, repos ];
 }
 
 function validate(error, response, env){
@@ -41,8 +41,7 @@ function validate(error, response, env){
     }
     
     if (error) throw new Error(error);
-    if (typeof response.body.message  == "string" ) return new Error(error);
-    
+    if (typeof response.body.message  == "string" ) return new Error(error);   
 }
 
 function getLastCommitter(response){
