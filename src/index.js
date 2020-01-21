@@ -1,11 +1,16 @@
 require('dotenv').config();
 
+var {
+    checkStatus,
+} = require('./lib/common.js');
+
+  
 //get files
-var { repos } = require('./repos.json');
+var { repos } = require('./data/repos.json');
 //get request
 var request = require('request');
 //get tekton functions
-var { createPipelinerun } = require('./tekton.js');
+//var { createPipelinerun } = require('./lib/tekton.js/index.js');
 //variables
 var date =  null;
 

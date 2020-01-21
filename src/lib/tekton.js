@@ -11,17 +11,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import {
+var {
   deleteRequest,
   get,
   patchAddSecret,
   patchUpdateSecrets,
   post,
   put
-} from './comms';
+} = require('./comms');
 
-export function getAPIRoot() {
+const ALL_NAMESPACES = '*';
+
+function getAPIRoot() {
   const { href, hash } = window.location;
   let baseURL = href.replace(hash, '');
   if (baseURL.endsWith('/')) {
@@ -39,7 +40,7 @@ function getQueryParams(filters) {
   return '';
 }
 
-export function getAPI(type, { name = '', namespace } = {}, queryParams) {
+ function getAPI(type, { name = '', namespace } = {}, queryParams) {
   return [
     apiRoot,
     '/v1/namespaces/',
@@ -52,7 +53,7 @@ export function getAPI(type, { name = '', namespace } = {}, queryParams) {
   ].join('');
 }
 
-export function getKubeAPI(
+ function getKubeAPI(
   type,
   { name = '', namespace, subResource } = {},
   queryParams
@@ -71,7 +72,7 @@ export function getKubeAPI(
   ].join('');
 }
 
-export function getResourcesAPI(
+ function getResourcesAPI(
   { group, version, type, name = '', namespace },
   queryParams
 ) {
@@ -88,27 +89,27 @@ export function getResourcesAPI(
   ].join('');
 }
 
-export function getTektonAPI(type, { name = '', namespace } = {}, queryParams) {
+ function getTektonAPI(type, { name = '', namespace } = {}, queryParams) {
   return getResourcesAPI(
     { group: 'tekton.dev', version: 'v1alpha1', type, name, namespace },
     queryParams
   );
 }
 
-export function getExtensionBaseURL(name) {
+ function getExtensionBaseURL(name) {
   return `${apiRoot}/v1/extensions/${name}`;
 }
 
-export function getExtensionBundleURL(name, bundlelocation) {
+ function getExtensionBundleURL(name, bundlelocation) {
   return `${getExtensionBaseURL(name)}/${bundlelocation}`;
 }
 
 /* istanbul ignore next */
-export function getWebSocketURL() {
+ function getWebSocketURL() {
   return `${apiRoot.replace(/^http/, 'ws')}/v1/websockets/resources`;
 }
 
-export function checkData(data) {
+ function checkData(data) {
   if (data.items) {
     return data.items;
   }
@@ -118,17 +119,17 @@ export function checkData(data) {
   throw error;
 }
 
-export function getPipelines({ namespace } = {}) {
+ function getPipelines({ namespace } = {}) {
   const uri = getTektonAPI('pipelines', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getPipeline({ name, namespace }) {
+ function getPipeline({ name, namespace }) {
   const uri = getTektonAPI('pipelines', { name, namespace });
   return get(uri);
 }
 
-export function getPipelineRuns({ filters = [], namespace } = {}) {
+ function getPipelineRuns({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'pipelineruns',
     { namespace },
@@ -137,12 +138,12 @@ export function getPipelineRuns({ filters = [], namespace } = {}) {
   return get(uri).then(checkData);
 }
 
-export function getPipelineRun({ name, namespace }) {
+ function getPipelineRun({ name, namespace }) {
   const uri = getTektonAPI('pipelineruns', { name, namespace });
   return get(uri);
 }
 
-export function cancelPipelineRun({ name, namespace }) {
+ function cancelPipelineRun({ name, namespace }) {
   return getPipelineRun({ name, namespace }).then(pipelineRun => {
     pipelineRun.spec.status = 'PipelineRunCancelled'; // eslint-disable-line
     const uri = getTektonAPI('pipelineruns', { name, namespace });
@@ -150,27 +151,27 @@ export function cancelPipelineRun({ name, namespace }) {
   });
 }
 
-export function deletePipelineRun({ name, namespace }) {
+ function deletePipelineRun({ name, namespace }) {
   const uri = getTektonAPI('pipelineruns', { name, namespace });
   return deleteRequest(uri);
 }
 
-export function deleteTaskRun({ name, namespace }) {
+ function deleteTaskRun({ name, namespace }) {
   const uri = getTektonAPI('taskruns', { name, namespace });
   return deleteRequest(uri);
 }
 
-export function createPipelineResource({ namespace, resource } = {}) {
+ function createPipelineResource({ namespace, resource } = {}) {
   const uri = getTektonAPI('pipelineresources', { namespace });
   return post(uri, resource);
 }
 
-export function deletePipelineResource({ name, namespace } = {}) {
+ function deletePipelineResource({ name, namespace } = {}) {
   const uri = getTektonAPI('pipelineresources', { name, namespace });
   return deleteRequest(uri, name);
 }
 
-export function createPipelineRun({
+ function createPipelineRun({
   namespace,
   pipelineName,
   resources,
@@ -216,37 +217,37 @@ export function createPipelineRun({
   return post(uri, payload);
 }
 
-export function getClusterTasks() {
+ function getClusterTasks() {
   const uri = getTektonAPI('clustertasks');
   return get(uri).then(checkData);
 }
 
-export function getClusterTask({ name }) {
+ function getClusterTask({ name }) {
   const uri = getTektonAPI('clustertasks', { name });
   return get(uri);
 }
 
-export function getTasks({ namespace } = {}) {
+ function getTasks({ namespace } = {}) {
   const uri = getTektonAPI('tasks', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getTask({ name, namespace }) {
+ function getTask({ name, namespace }) {
   const uri = getTektonAPI('tasks', { name, namespace });
   return get(uri);
 }
 
-export function getTaskRuns({ filters = [], namespace } = {}) {
+ function getTaskRuns({ filters = [], namespace } = {}) {
   const uri = getTektonAPI('taskruns', { namespace }, getQueryParams(filters));
   return get(uri).then(checkData);
 }
 
-export function getTaskRun({ name, namespace }) {
+ function getTaskRun({ name, namespace }) {
   const uri = getTektonAPI('taskruns', { name, namespace });
   return get(uri);
 }
 
-export function cancelTaskRun({ name, namespace }) {
+ function cancelTaskRun({ name, namespace }) {
   return getTaskRun({ name, namespace }).then(taskRun => {
     taskRun.spec.status = 'TaskRunCancelled'; // eslint-disable-line
     const uri = getTektonAPI('taskruns', { name, namespace });
@@ -254,17 +255,17 @@ export function cancelTaskRun({ name, namespace }) {
   });
 }
 
-export function getPipelineResources({ namespace } = {}) {
+ function getPipelineResources({ namespace } = {}) {
   const uri = getTektonAPI('pipelineresources', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getPipelineResource({ name, namespace }) {
+ function getPipelineResource({ name, namespace }) {
   const uri = getTektonAPI('pipelineresources', { name, namespace });
   return get(uri);
 }
 
-export function getPodLog({ container, name, namespace }) {
+ function getPodLog({ container, name, namespace }) {
   let queryParams;
   if (container) {
     queryParams = { container };
@@ -277,12 +278,12 @@ export function getPodLog({ container, name, namespace }) {
   return get(uri, { Accept: 'text/plain' });
 }
 
-export function rerunPipelineRun(namespace, payload) {
+ function rerunPipelineRun(namespace, payload) {
   const uri = getAPI('rerun', { namespace });
   return post(uri, payload);
 }
 
-export function getCredentials(namespace) {
+ function getCredentials(namespace) {
   const queryParams = {
     fieldSelector: 'type=kubernetes.io/basic-auth'
   };
@@ -290,37 +291,37 @@ export function getCredentials(namespace) {
   return get(uri);
 }
 
-export function getAllCredentials(namespace) {
+ function getAllCredentials(namespace) {
   const uri = getKubeAPI('secrets', namespace);
   return get(uri);
 }
 
-export function getCredential(id, namespace) {
+ function getCredential(id, namespace) {
   const uri = getKubeAPI('secrets', { name: id, namespace });
   return get(uri);
 }
 
-export function createCredential({ id, ...rest }, namespace) {
+ function createCredential({ id, ...rest }, namespace) {
   const uri = getKubeAPI('secrets', { namespace });
   return post(uri, { id, ...rest });
 }
 
-export function updateCredential({ id, ...rest }, namespace) {
+ function updateCredential({ id, ...rest }, namespace) {
   const uri = getKubeAPI('secrets', { name: id, namespace });
   return put(uri, { id, ...rest });
 }
 
-export function deleteCredential(id, namespace) {
+ function deleteCredential(id, namespace) {
   const uri = getKubeAPI('secrets', { name: id, namespace });
   return deleteRequest(uri);
 }
 
-export function getServiceAccount({ name, namespace }) {
+ function getServiceAccount({ name, namespace }) {
   const uri = getKubeAPI('serviceaccounts', { name, namespace });
   return get(uri);
 }
 
-export async function patchServiceAccount({
+ async function patchServiceAccount({
   serviceAccountName,
   namespace,
   secretName
@@ -334,7 +335,7 @@ export async function patchServiceAccount({
 }
 
 // Use this for unpatching service accounts
-export async function updateServiceAccountSecrets(
+ async function updateServiceAccountSecrets(
   sa,
   namespace,
   secretsToKeep
@@ -346,22 +347,22 @@ export async function updateServiceAccountSecrets(
   return patchUpdateSecrets(uri, secretsToKeep);
 }
 
-export function getServiceAccounts({ namespace } = {}) {
+ function getServiceAccounts({ namespace } = {}) {
   const uri = getKubeAPI('serviceaccounts', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getCustomResources(...args) {
+ function getCustomResources(...args) {
   const uri = getResourcesAPI(...args);
   return get(uri).then(checkData);
 }
 
-export function getCustomResource(...args) {
+ function getCustomResource(...args) {
   const uri = getResourcesAPI(...args);
   return get(uri);
 }
 
-export async function getExtensions() {
+ async function getExtensions() {
   const uri = `${apiRoot}/v1/extensions`;
   const resourceExtensionsUri = getResourcesAPI({
     group: 'dashboard.tekton.dev',
@@ -393,17 +394,17 @@ export async function getExtensions() {
   );
 }
 
-export function getNamespaces() {
+ function getNamespaces() {
   const uri = getKubeAPI('namespaces');
   return get(uri).then(checkData);
 }
 
-export function getInstallProperties() {
+ function getInstallProperties() {
   const uri = `${apiRoot}/v1/properties`;
   return get(uri);
 }
 
-export function shouldDisplayLogout() {
+ function shouldDisplayLogout() {
   const routesUri = getResourcesAPI({
     group: 'route.openshift.io',
     version: 'v1'
@@ -411,7 +412,7 @@ export function shouldDisplayLogout() {
   return get(routesUri, { Accept: 'text/plain' });
 }
 
-export async function determineInstallNamespace() {
+ async function determineInstallNamespace() {
   const response = getInstallProperties()
     .then(installProps => {
       return installProps.InstallNamespace;
@@ -422,7 +423,7 @@ export async function determineInstallNamespace() {
   return response;
 }
 
-export function getTriggerTemplates({ filters = [], namespace } = {}) {
+ function getTriggerTemplates({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'triggertemplates',
     { namespace },
@@ -431,12 +432,12 @@ export function getTriggerTemplates({ filters = [], namespace } = {}) {
   return get(uri).then(checkData);
 }
 
-export function getTriggerTemplate({ name, namespace }) {
+ function getTriggerTemplate({ name, namespace }) {
   const uri = getTektonAPI('triggertemplates', { name, namespace });
   return get(uri);
 }
 
-export function getTriggerBindings({ filters = [], namespace } = {}) {
+ function getTriggerBindings({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'triggerbindings',
     { namespace },
@@ -445,12 +446,12 @@ export function getTriggerBindings({ filters = [], namespace } = {}) {
   return get(uri).then(checkData);
 }
 
-export function getTriggerBinding({ name, namespace }) {
+ function getTriggerBinding({ name, namespace }) {
   const uri = getTektonAPI('triggerbindings', { name, namespace });
   return get(uri);
 }
 
-export function getEventListeners({ filters = [], namespace } = {}) {
+ function getEventListeners({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'eventlisteners',
     { namespace },
@@ -459,7 +460,64 @@ export function getEventListeners({ filters = [], namespace } = {}) {
   return get(uri).then(checkData);
 }
 
-export function getEventListener({ name, namespace }) {
+ function getEventListener({ name, namespace }) {
   const uri = getTektonAPI('eventlisteners', { name, namespace });
   return get(uri);
 }
+
+module.s = {
+  getAPIRoot,
+  getQueryParamsfilters,
+  getAPItype,
+  getKubeAPI,
+  getResourcesAPI,
+  getTektonAPItype,
+  getExtensionBaseURLname,
+  getExtensionBundleURLname,
+  getWebSocketURL,
+  checkDatadata,
+  getPipelines,
+  getPipeline,
+  getPipelineRuns,
+  getPipelineRun,
+  cancelPipelineRun,
+  deletePipelineRun,
+  deleteTaskRun,
+  createPipelineResource,
+  deletePipelineResource,
+  createPipelineRun,
+  getClusterTasks,
+  getClusterTask,
+  getTasks,
+  getTask,
+  getTaskRuns,
+  getTaskRun,
+  cancelTaskRun,
+  getPipelineResources,
+  getPipelineResource,
+  getPodLogcontainer,
+  rerunPipelineRunnamespace,
+  getCredentialsnamespace,
+  getAllCredentialsnamespace,
+  getCredentialid,
+  createCredential,
+  updateCredential,
+  deleteCredentialid,
+  getServiceAccount,
+  patchServiceAccount,
+  updateServiceAccountSecrets,
+  getServiceAccounts,
+  getCustomResources,
+  getCustomResource,
+  getExtensions,
+  getNamespaces,
+  getInstallProperties,
+  shouldDisplayLogout,
+  determineInstallNamespace,
+  getTriggerTemplates,
+  getTriggerTemplate,
+  getTriggerBindings,
+  getTriggerBinding,
+  getEventListeners,
+  getEventListener,
+};
