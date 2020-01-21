@@ -4,7 +4,6 @@ var {
     checkStatus,
 } = require('./lib/common.js');
 
-  
 //get files
 var { repos } = require('./data/repos.json');
 //get request
