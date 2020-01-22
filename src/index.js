@@ -22,6 +22,7 @@ function getRepos() {
 
 			if (new_date !== date) {
 				request(pipelineRunRequest, function(error, response) {
+					console.log('sending pipeline request ...');
 					validate(error, response);
 				});
 				date = new_date;
@@ -96,4 +97,15 @@ function random(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-console.log('programming is running...');
+console.log("program is running on port => " + process.env.PORT);
+console.log("program is seraching for service => " + process.env.IP);
+
+
+module.exports = {
+	random,
+	generateUUID,
+	getRequests,
+	getLastCommitter,
+	validate,
+	getRepos
+};
