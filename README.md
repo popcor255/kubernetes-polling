@@ -1,4 +1,5 @@
 # git-pod-puller
+Current only works with github
 
 ## Installation
 
