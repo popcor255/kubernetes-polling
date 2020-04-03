@@ -1,7 +1,6 @@
-# git-pod-puller
-kubernetes-polling
+# kubernetes-polling
 
-## Description
+## Summary
 This program allows you to poll any git resource for changes inorder to trigger a pipeline.
 
 ## Installation
