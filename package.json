@@ -8,6 +8,6 @@
     "shortid": "^2.2.15"
   },
   "devDependencies": {
-    "ts-jest": "^24.3.0"
+    "ts-jest": "^24.3.1"
   }
 }
